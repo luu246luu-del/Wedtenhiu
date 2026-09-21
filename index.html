@@ -128,18 +128,14 @@ transform:scale(1.15);;;display:block;background:#0c0410;transition:visibility 0
   position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(180deg,rgba(10,2,10,.55) 0%,transparent 26%,transparent 68%,rgba(10,2,10,.7) 100%);
 }
-.intro__sound,.intro__skip{
+.intro__skip{
   position:absolute;z-index:5;border:1px solid rgba(255,255,255,.55);color:#fff;
-  background:rgba(30,12,26,.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);
+  background:rgba(30,12,26,.55);
   transition:opacity .35s,transform .35s var(--spring);
 }
-.intro__sound{top:calc(var(--sat) + 18px);left:18px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center}
-.intro__sound svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.intro__sound .wave{opacity:.35;transition:opacity .25s}
-.intro__sound.is-on .wave{opacity:1}
-.intro__sound:active,.intro__skip:active{transform:scale(.9)}
+.intro__skip:active{transform:scale(.9)}
 .intro__skip{right:18px;bottom:calc(var(--sab) + 22px);padding:11px 20px;border-radius:999px;font:500 13.5px var(--font-body);letter-spacing:.01em}
-.intro.is-leaving .intro__sound,.intro.is-leaving .intro__skip{opacity:0;visibility:hidden;pointer-events:none}
+.intro.is-leaving .intro__skip{opacity:0;visibility:hidden;pointer-events:none}
 
 /* Cửa đôi: mở ra để lộ màn mật khẩu phía sau */
 .intro__doors{position:absolute;inset:0;z-index:3;perspective:1500px}
@@ -227,7 +223,7 @@ transform:scale(1.15);;;display:block;background:#0c0410;transition:visibility 0
 
 /* Kính vỡ */
 .lock__shards{position:absolute;inset:0;z-index:1}
-.shard{position:absolute;inset:0;background:var(--lock-bg);transform-origin:var(--ox) var(--oy);backface-visibility:hidden;will-change:transform,opacity}
+.shard{position:absolute;left:0;top:0;background-image:var(--lock-bg);background-repeat:no-repeat;transform-origin:var(--ox) var(--oy);backface-visibility:hidden;will-change:transform,opacity}
 .shard::after{content:'';position:absolute;inset:0;background:linear-gradient(var(--sa),rgba(255,255,255,.55),rgba(255,255,255,0) 58%)}
 .lock.is-breaking .shard{animation:shardFly 1s var(--dl) cubic-bezier(.5,0,.9,.4) forwards}
 @keyframes shardFly{
@@ -749,10 +745,28 @@ transform:scale(1.15);;;display:block;background:#0c0410;transition:visibility 0
     0 2px 7px rgba(61, 15, 43, 0.95),
     0 0 14px rgba(61, 15, 43, 0.65);
 }
+
+/* =====================================================================
+   TỐI ƯU BỘ NHỚ CHO ĐIỆN THOẠI (iPhone Safari hay tự đóng trang khi quá nặng)
+   ===================================================================== */
+/* Khi đang xem video mở đầu hoặc đang ở màn khóa, các lớp phía sau bị che kín nên không cần vẽ */
+body.is-intro #lock,
+body.is-intro #dashboard{visibility:hidden}
+body.is-locked:not(.is-unlocking) .mesh{visibility:hidden}
+
+@media (hover:none) and (pointer:coarse){
+  /* Các mảng màu nền lớn: đứng yên thay vì trôi, tránh tạo nhiều lớp GPU khổng lồ */
+  .blob{animation:none!important;will-change:auto}
+  .mesh__sheen{animation:none!important}
+  /* Giảm độ mờ kính để đỡ tốn bộ nhớ */
+  .glass,.card3d__glass{-webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5)}
+  .lightbox__backdrop{-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+  .paper{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+}
 </style>
 </head>
 
-<body class="is-locked">
+<body class="is-locked is-intro">
 <div id="app">
 
   <!-- Nền: mesh pastel + trái tim 3D phồng + lấp lánh -->
@@ -766,11 +780,8 @@ transform:scale(1.15);;;display:block;background:#0c0410;transition:visibility 0
 
   <!-- ============ GIAI ĐOẠN 0: MÀN MỞ ĐẦU (VIDEO) ============ -->
   <div class="intro" id="intro">
-    <video id="introVideo" class="intro__video" src="intro-cleaned.mp4" muted playsinline autoplay preload="auto"></video>
+    <video id="introVideo" class="intro__video" src="intro-cleaned.mp4" muted playsinline webkit-playsinline autoplay preload="auto" disablepictureinpicture></video>
     <div class="intro__veil" aria-hidden="true"></div>
-    <button type="button" class="intro__sound" id="introSound" aria-label="Bật âm thanh">
-      <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path class="wave" d="M16.2 8.6a5.2 5.2 0 010 6.8M19 6a9 9 0 010 12"/></svg>
-    </button>
     <button type="button" class="intro__skip" id="introSkip">Chạm để bỏ qua</button>
     <div class="intro__doors" id="introDoors" aria-hidden="true">
       <div class="door door--l"><span class="door__panel"></span><span class="door__handle"></span></div>
@@ -1019,7 +1030,7 @@ const PLAYLIST = [
     src: 'music/bai1.mp3'
   }
 ];
-``
+
 /* 7) NỘI DUNG THƯ TÌNH */
 const LETTER = {
   title: 'Thư gửi em',
@@ -1215,7 +1226,7 @@ const FX = (() => {
   const COLORS = ['#ff5c98', '#ff8db6', '#e6a08a', '#c79bff', '#ffb84d', '#ff7fae', '#ffffff'];
   let parts = [], raf = 0, W = 0, H = 0, lastTrail = 0;
   function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     W = window.innerWidth; H = window.innerHeight;
     cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
@@ -1378,7 +1389,7 @@ const Transition = (() => {
   let W = 0, H = 0, dpr = 1, raf = 0, busy = false, eff = null, t0 = 0;
 
   function fit() {
-    dpr = Math.min(window.devicePixelRatio || 1, 3);
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
     W = window.innerWidth; H = window.innerHeight;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -2337,10 +2348,15 @@ const Lock = (() => {
       const cx = (t[0][0] + t[1][0] + t[2][0]) / 3, cy = (t[0][1] + t[1][1] + t[2][1]) / 3;
       const dx = cx - ix, dy = cy - iy, dist = Math.hypot(dx, dy) || 1, nd = dist / maxD;
       const el = document.createElement('div'); el.className = 'shard';
-      const poly = 'polygon(' + t.map(p => p[0].toFixed(1) + 'px ' + p[1].toFixed(1) + 'px').join(',') + ')';
+      /* Mỗi mảnh chỉ rộng bằng khung bao của tam giác (thay vì cả màn hình) để tiết kiệm bộ nhớ */
+      const bx = Math.floor(Math.min(t[0][0], t[1][0], t[2][0])), by = Math.floor(Math.min(t[0][1], t[1][1], t[2][1]));
+      const bw = Math.ceil(Math.max(t[0][0], t[1][0], t[2][0])) - bx + 1, bh = Math.ceil(Math.max(t[0][1], t[1][1], t[2][1])) - by + 1;
+      el.style.left = bx + 'px'; el.style.top = by + 'px'; el.style.width = bw + 'px'; el.style.height = bh + 'px';
+      el.style.backgroundSize = W + 'px ' + H + 'px'; el.style.backgroundPosition = (-bx) + 'px ' + (-by) + 'px';
+      const poly = 'polygon(' + t.map(p => (p[0] - bx).toFixed(1) + 'px ' + (p[1] - by).toFixed(1) + 'px').join(',') + ')';
       el.style.clipPath = poly; el.style.webkitClipPath = poly;
       const power = 160 + nd * 420 + Math.random() * 220, ax = Math.random() - .5, ay = Math.random() - .5, az = Math.random() - .5, al = Math.hypot(ax, ay, az) || 1;
-      el.style.setProperty('--ox', cx + 'px'); el.style.setProperty('--oy', cy + 'px');
+      el.style.setProperty('--ox', (cx - bx) + 'px'); el.style.setProperty('--oy', (cy - by) + 'px');
       el.style.setProperty('--tx', (dx / dist * power) + 'px');
       el.style.setProperty('--ty', (dy / dist * power + 240 + Math.random() * 360) + 'px');
       el.style.setProperty('--tz', (120 + Math.random() * 520) + 'px');
@@ -2370,6 +2386,7 @@ const Lock = (() => {
     let ix = window.innerWidth / 2, iy = window.innerHeight * .62;
     if (lastKey) { const r = lastKey.getBoundingClientRect(); ix = r.left + r.width / 2; iy = r.top + r.height / 2; }
     root.style.setProperty('--ix', ix + 'px'); root.style.setProperty('--iy', iy + 'px');
+    document.body.classList.add('is-unlocking');
     root.classList.add('is-success'); vibrate([20, 30, 70]);
     await sleep(240);
 
@@ -2399,34 +2416,24 @@ const Lock = (() => {
    ===================================================================== */
 const Intro = (() => {
   const root = $('#intro');
-  if (!root) return null;
-  const video = $('#introVideo'), soundBtn = $('#introSound'), skipBtn = $('#introSkip');
-  let done = false;
+  if (!root) { document.body.classList.remove('is-intro'); return null; }
+  const video = $('#introVideo'), skipBtn = $('#introSkip');
+  let done = false, started = false, watchdog = 0;
 
-function attemptSound() {
-  video.muted = true;
-  video.volume = 0;
-
-  soundBtn.classList.remove('is-on');
-
-  video.play().catch(() => {});
-}
-  soundBtn.addEventListener('click', () => {
-    video.muted = !video.muted;
-    soundBtn.classList.toggle('is-on', !video.muted);
-    vibrate(8);
-    if (!video.muted) video.play().catch(() => {});
-  });
+  /* Video mở đầu luôn TẮT TIẾNG (file mp4 cũng đã được gỡ hẳn track âm thanh) */
+  video.muted = true; video.defaultMuted = true; video.volume = 0;
 
   async function openDoor() {
     if (done) return;
     done = true;
+    clearTimeout(watchdog);
     root.classList.add('is-leaving');
     vibrate(12);
     try { video.pause(); } catch (_) {}
 
-    /* 1) Cửa khép lại che video */
+    /* 1) Cửa khép lại che video, lúc này mới hiện màn khóa phía sau */
     root.classList.add('is-closing');
+    document.body.classList.remove('is-intro');
     await sleep(580);
     video.style.visibility = 'hidden';
     await sleep(180);
@@ -2448,9 +2455,15 @@ function attemptSound() {
   skipBtn.addEventListener('click', openDoor);
   video.addEventListener('ended', openDoor);
   video.addEventListener('error', () => { toast('Không tải được video mở đầu'); openDoor(); });
+  video.addEventListener('playing', () => { started = true; clearTimeout(watchdog); });
 
-  /* Cố gắng phát có tiếng; nếu trình duyệt chặn thì tự chuyển sang câm */
-  attemptSound();
+  /* iPhone ở chế độ Tiết kiệm pin (hoặc trình duyệt chặn autoplay) sẽ không cho video tự chạy.
+     Khi đó bỏ qua phần mở đầu để không bị kẹt ở màn đen. */
+  const p = video.play();
+  if (p && p.catch) p.catch(() => { setTimeout(() => { if (!started) openDoor(); }, 400); });
+  watchdog = setTimeout(() => { if (!started) openDoor(); }, 4500);
+  /* Chốt an toàn: dù video treo giữa chừng cũng không kẹt quá lâu */
+  setTimeout(() => openDoor(), 16000);
 
   return { openDoor };
 })();
