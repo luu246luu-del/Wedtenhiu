@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 458" role="img" aria-label="Dung lượng tài nguyên">
+<rect width="1000" height="458" rx="28" fill="#100b1d"/>
+<text x="52" y="55" font-family="Arial,sans-serif" font-size="30" font-weight="bold" fill="#fff4fa">Dung lượng tài nguyên</text>
+<text x="52" y="87" font-family="Arial,sans-serif" font-size="17" fill="#c8bdd8">Kích thước giải nén thực tế</text>
+<text x="52" y="159" font-family="Arial,sans-serif" font-size="20" fill="#f5e7ff">Video MP4</text>
+<rect x="350" y="135" width="495" height="30" rx="12" fill="#2c2343"/>
+<rect x="350" y="135" width="495.0" height="30" rx="12" fill="#f472b6"/>
+<text x="863" y="158" font-family="Arial,sans-serif" font-size="19" font-weight="bold" fill="#fff">18.71 MiB</text>
+<text x="52" y="241" font-family="Arial,sans-serif" font-size="20" fill="#f5e7ff">Ảnh JPG</text>
+<rect x="350" y="217" width="495" height="30" rx="12" fill="#2c2343"/>
+<rect x="350" y="217" width="323.6" height="30" rx="12" fill="#a78bfa"/>
+<text x="863" y="240" font-family="Arial,sans-serif" font-size="19" font-weight="bold" fill="#fff">12.23 MiB</text>
+<text x="52" y="323" font-family="Arial,sans-serif" font-size="20" fill="#f5e7ff">Nhạc MP3</text>
+<rect x="350" y="299" width="495" height="30" rx="12" fill="#2c2343"/>
+<rect x="350" y="299" width="166.0" height="30" rx="12" fill="#38bdf8"/>
+<text x="863" y="322" font-family="Arial,sans-serif" font-size="19" font-weight="bold" fill="#fff">6.28 MiB</text>
+<text x="52" y="405" font-family="Arial,sans-serif" font-size="20" fill="#f5e7ff">Trang HTML</text>
+<rect x="350" y="381" width="495" height="30" rx="12" fill="#2c2343"/>
+<rect x="350" y="381" width="3.4" height="30" rx="12" fill="#fb923c"/>
+<text x="863" y="404" font-family="Arial,sans-serif" font-size="19" font-weight="bold" fill="#fff">0.13 MiB</text>
+<text x="52" y="433" font-family="Arial,sans-serif" font-size="13" fill="#b9adc9">Đơn vị MiB = 1.048.576 byte</text>
+</svg>
